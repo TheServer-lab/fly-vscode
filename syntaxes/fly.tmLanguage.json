@@ -1,0 +1,109 @@
+{
+  "scopeName": "source.fly",
+  "patterns": [
+    { "include": "#comments"  },
+    { "include": "#string"    },
+    { "include": "#numbers"   },
+    { "include": "#constants" },
+    { "include": "#types"     },
+    { "include": "#keywords"  },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name":        "comment.block.fly",
+          "begin":       "\\$\\$",
+          "end":         "\\$\\$",
+          "beginCaptures": { "0": { "name": "punctuation.definition.comment.begin.fly" } },
+          "endCaptures":   { "0": { "name": "punctuation.definition.comment.end.fly" } }
+        },
+        {
+          "name":  "comment.line.dollar.fly",
+          "match": "\\$.*$"
+        }
+      ]
+    },
+    "string": {
+      "begin": "\"",
+      "end":   "\"",
+      "name":  "string.quoted.double.fly",
+      "patterns": [
+        {
+          "name":  "constant.character.escape.fly",
+          "match": "\\{\\{|\\}\\}|\\\\[\\\\ntr\"]"
+        },
+        { "include": "#interpolation" }
+      ]
+    },
+    "interpolation": {
+      "begin": "\\{",
+      "end":   "\\}",
+      "name":  "meta.interpolation.fly",
+      "beginCaptures": { "0": { "name": "punctuation.definition.interpolation.begin.fly" } },
+      "endCaptures":   { "0": { "name": "punctuation.definition.interpolation.end.fly" } },
+      "patterns": [
+        { "include": "#comments"    },
+        { "include": "#string"      },
+        { "include": "#numbers"     },
+        { "include": "#constants"   },
+        { "include": "#types"       },
+        { "include": "#keywords"    },
+        { "include": "#punctuation" }
+      ]
+    },
+    "numbers": {
+      "match": "\\b\\d+(?:\\.\\d+)?\\b",
+      "name":  "constant.numeric.fly"
+    },
+    "constants": {
+      "match": "\\b(?:Yes|No|EMP)\\b",
+      "name":  "constant.language.fly"
+    },
+    "types": {
+      "match": "\\b(?:num|dec|tex|yn|emp|coll|board)\\b",
+      "name":  "storage.type.fly"
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name":  "keyword.control.fly",
+          "match": "\\b(?:if|orif|ifnot|while|for|in|skip|getout)\\b"
+        },
+        {
+          "name":  "keyword.declaration.fly",
+          "match": "\\b(?:job|native|hard)\\b"
+        },
+        {
+          "name":  "keyword.other.fly",
+          "match": "\\b(?:give|take|show|bring|do|grab|attach|place|erase|count|seek|has|bind|sever|cut|raise|lower)\\b"
+        },
+        {
+          "name":  "keyword.operator.logical.fly",
+          "match": "\\b(?:and|or|not)\\b"
+        },
+        {
+          "name":  "keyword.operator.bitwise.fly",
+          "match": "\\b(?:band|bor|bxor|bnot|shl|shr)\\b"
+        },
+        {
+          "name":  "keyword.operator.comparison.fly",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name":  "keyword.operator.arithmetic.fly",
+          "match": "[+\\-*/%]"
+        },
+        {
+          "name":  "keyword.operator.assignment.fly",
+          "match": "="
+        }
+      ]
+    },
+    "punctuation": {
+      "match": "[\\(\\)\\[\\]{}.,:;]",
+      "name":  "punctuation.other.fly"
+    }
+  }
+}

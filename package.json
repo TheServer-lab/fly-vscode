@@ -1,0 +1,88 @@
+{
+  "name": "fly-vscode",
+  "displayName": "Fly",
+  "description": "VS Code language support for the Fly programming language",
+  "version": "0.1.0",
+  "publisher": "fly-lang",
+  "engines": { "vscode": "^1.75.0" },
+  "license": "MIT",
+  "icon": "images/fly.ico",
+  "categories": ["Programming Languages"],
+  "main": "./out/src/extension.js",
+  "scripts": {
+    "compile":     "tsc -p ./",
+    "test":        "npm run compile && mocha \"out/test/**/*.test.js\" --timeout 10000",
+    "integration": "npm run compile && node out/test/integration/build_run.js",
+    "package":     "npm run compile && npx vsce package --allow-missing-repository -o fly-vscode.vsix"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "fly",
+        "aliases": ["Fly", "fly"],
+        "extensions": [".fly"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "fly",
+        "scopeName": "source.fly",
+        "path": "./syntaxes/fly.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      { "command": "fly.build",      "title": "Build",        "category": "Fly" },
+      { "command": "fly.run",        "title": "Run",          "category": "Fly" },
+      { "command": "fly.buildAndRun","title": "Build and Run","category": "Fly" }
+    ],
+    "configuration": [
+      {
+        "title": "Fly",
+        "properties": {
+          "fly.executable": {
+            "type":    "string",
+            "default": "fly",
+            "description": "Path or command used to invoke the Fly toolchain"
+          }
+        }
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "fly",
+        "required": [],
+        "properties": {
+          "action":   { "type": "string", "description": "build, run, or buildAndRun" },
+          "filePath": { "type": "string", "description": "Absolute path to the .fly file being operated on" }
+        },
+        "description": "Fly toolchain task"
+      }
+    ],
+    "problemMatchers": [
+      {
+        "name":          "fly.CompilerError",
+        "owner":         "fly",
+        "fileLocation": ["absolute"],
+        "severity":      "error",
+        "pattern": {
+          "regexp":  "^(.+?):(\\d+)(?::(\\d+))?: (?:lex |parse |codegen )?error: (.*)$",
+          "file":    1,
+          "line":    2,
+          "column":  3,
+          "message": 4
+        }
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/mocha":        "^10.0.0",
+    "@types/node":         "^20.0.0",
+    "@types/vscode":       "^1.75.0",
+    "@vscode/vsce":        "^3.0.0",
+    "mocha":               "^10.0.0",
+    "typescript":          "^5.0.0",
+    "vscode-oniguruma":    "^2.0.0",
+    "vscode-textmate":     "^9.0.0"
+  }
+}
