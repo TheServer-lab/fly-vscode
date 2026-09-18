@@ -2,7 +2,7 @@
   "name": "fly-vscode",
   "displayName": "Fly",
   "description": "VS Code language support for the Fly programming language",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "fly-lang",
   "engines": { "vscode": "^1.75.0" },
   "license": "MIT",

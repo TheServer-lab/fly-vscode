@@ -2,6 +2,24 @@
 
 All notable changes to `fly-vscode` are documented here.
 
+## [0.1.1] - 2026-09-18
+
+### Added
+
+- Fly 0.1.5 language sync:
+  - `group` recognized as a declaration keyword, with the group name and the
+    inherited parent name highlighted as type identifiers.
+  - `from` recognized for group inheritance.
+  - `wait` recognized as a statement keyword (`wait 0.05`, `wait .5`).
+  - Leading-dot decimals (`wait .5`) tokenize as a single numeric literal,
+    matching the compiler lexer.
+  - Dotted member access (`self.name`, `bob.introduce()`,
+    `process.wait(...)`) highlights the receiver as an object, the member as a
+    property, and the dot as an accessor — mirroring the lexer rule that
+    identifiers after a `.` are never keywords.
+- Regression tests covering the group/OOP syntax, `self` as a non-keyword
+  receiver, member access, `wait`, and dotted API calls.
+
 ## [0.1.0] - 2026-09-16
 
 Initial release.

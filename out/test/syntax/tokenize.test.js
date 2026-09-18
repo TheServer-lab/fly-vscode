@@ -69,6 +69,24 @@ const sampleLines = [
     '}', // 13 closing brace
     'x = band 5', // 14 bitwise keyword
     'if a and b {', // 15 logical keyword
+    'group Person {', // 16 group declaration
+    '    name', // 17 group field (plain identifier)
+    '    age', // 18
+    '    job introduce() {', // 19 job inside a group
+    '        show("hello, i\'m " + self.name)', // 20 string + self member access
+    '    }', // 21
+    '}', // 22
+    'group Employee from Person {', // 23 group with inheritance
+    '    role', // 24
+    '    job describe() {', // 25
+    '        self.introduce()', // 26 self receiver + method call
+    '        show(self.role)', // 27
+    '    }', // 28
+    '}', // 29
+    'alice = Employee("alice", 55, "sr eng")', // 30 construction = ordinary call
+    'wait 0.5', // 31 wait statement, decimal
+    'wait .5', // 32 wait statement, leading-dot decimal
+    'process.wait("cmd")', // 33 dotted API call (wait ≠ keyword here)
 ];
 function findToken(tokens, offset) {
     return tokens.find(t => t.startIndex <= offset && t.endIndex > offset);
@@ -139,6 +157,65 @@ describe('syntax highlighting', () => {
         // line 5: 'show("val = {val + 1}")' — + is at offset 17
         const token = findToken(lines[5], 17);
         assert.ok(token?.scopes.some(s => s.includes('keyword.operator.arithmetic.fly')));
+    });
+    it('keyword.declaration (group)', () => {
+        assert.ok(findToken(lines[16], 0)?.scopes.some(s => s.includes('keyword.declaration.fly')));
+    });
+    it('entity.name.type (group name Person)', () => {
+        assert.ok(findToken(lines[16], 6)?.scopes.some(s => s.includes('entity.name.type.fly')));
+    });
+    it('keyword.declaration (job inside group body)', () => {
+        assert.ok(findToken(lines[19], 4)?.scopes.some(s => s.includes('keyword.declaration.fly')));
+    });
+    it('entity.name.type (group name Employee)', () => {
+        assert.ok(findToken(lines[23], 6)?.scopes.some(s => s.includes('entity.name.type.fly')));
+    });
+    it('keyword.other (from)', () => {
+        assert.ok(findToken(lines[23], 15)?.scopes.some(s => s.includes('keyword.other.fly')));
+    });
+    it('entity.name.type (inherited parent Person)', () => {
+        assert.ok(findToken(lines[23], 20)?.scopes.some(s => s.includes('entity.name.type.fly')));
+    });
+    it('self is a receiver identifier, not a keyword', () => {
+        // line 26: '        self.introduce()' — self at offset 8
+        const token = findToken(lines[26], 8);
+        assert.ok(token?.scopes.some(s => s.includes('variable.other.object.fly')));
+        assert.ok(!token?.scopes.some(s => s.includes('keyword.')));
+    });
+    it('member name after dot is a property, not a keyword', () => {
+        // line 20: '        show("hello, i\'m " + self.name)' — name at offset 34
+        const token = findToken(lines[20], 34);
+        assert.ok(token?.scopes.some(s => s.includes('variable.other.property.fly')));
+        assert.ok(!token?.scopes.some(s => s.includes('keyword.')));
+    });
+    it('member access dot is punctuation.accessor', () => {
+        // line 20 — dot between self (29) and name (34) is at offset 33
+        assert.ok(findToken(lines[20], 33)?.scopes.some(s => s.includes('punctuation.accessor.fly')));
+    });
+    it('group construction is ordinary call syntax', () => {
+        // line 30: Employee(...) — the type name is a plain identifier, not a keyword
+        const token = findToken(lines[30], 8);
+        assert.ok(token && !token.scopes.some(s => s.includes('keyword.')));
+    });
+    it('keyword.other (wait statement)', () => {
+        assert.ok(findToken(lines[31], 0)?.scopes.some(s => s.includes('keyword.other.fly')));
+    });
+    it('decimal literal 0.5', () => {
+        assert.ok(findToken(lines[31], 5)?.scopes.some(s => s.includes('constant.numeric.fly')));
+    });
+    it('leading-dot decimal .5 is a single numeric literal', () => {
+        // line 32: 'wait .5' — '.' at offset 5, token must span both chars
+        const token = findToken(lines[32], 5);
+        assert.ok(token?.scopes.some(s => s.includes('constant.numeric.fly')));
+        assert.strictEqual(token.startIndex, 5);
+        assert.strictEqual(token.endIndex - token.startIndex, 2);
+    });
+    it('dotted API call member (process.wait) is a property, not the wait keyword', () => {
+        // line 33: 'process.wait("cmd")' — process at 0, wait at 8
+        assert.ok(findToken(lines[33], 0)?.scopes.some(s => s.includes('variable.other.object.fly')));
+        const token = findToken(lines[33], 8);
+        assert.ok(token?.scopes.some(s => s.includes('variable.other.property.fly')));
+        assert.ok(!token?.scopes.some(s => s.includes('keyword.')));
     });
 });
 //# sourceMappingURL=tokenize.test.js.map

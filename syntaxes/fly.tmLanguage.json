@@ -54,7 +54,7 @@
       ]
     },
     "numbers": {
-      "match": "\\b\\d+(?:\\.\\d+)?\\b",
+      "match": "(?:\\b\\d+(?:\\.\\d+)?|\\.\\d+)\\b",
       "name":  "constant.numeric.fly"
     },
     "constants": {
@@ -68,16 +68,38 @@
     "keywords": {
       "patterns": [
         {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)(\\.)([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "variable.other.object.fly" },
+            "2": { "name": "punctuation.accessor.fly" },
+            "3": { "name": "variable.other.property.fly" }
+          }
+        },
+        {
+          "match": "\\b(group)\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.declaration.fly" },
+            "2": { "name": "entity.name.type.fly" }
+          }
+        },
+        {
+          "match": "\\b(from)\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.other.fly" },
+            "2": { "name": "entity.name.type.fly" }
+          }
+        },
+        {
           "name":  "keyword.control.fly",
           "match": "\\b(?:if|orif|ifnot|while|for|in|skip|getout)\\b"
         },
         {
           "name":  "keyword.declaration.fly",
-          "match": "\\b(?:job|native|hard)\\b"
+          "match": "\\b(?:job|native|hard|group)\\b"
         },
         {
           "name":  "keyword.other.fly",
-          "match": "\\b(?:give|take|show|bring|do|grab|attach|place|erase|count|seek|has|bind|sever|cut|raise|lower)\\b"
+          "match": "\\b(?:give|take|show|bring|do|grab|attach|place|erase|count|seek|has|bind|sever|cut|raise|lower|from|wait)\\b"
         },
         {
           "name":  "keyword.operator.logical.fly",
